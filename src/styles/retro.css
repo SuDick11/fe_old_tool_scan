@@ -285,10 +285,8 @@ body {
 }
 
 .dashboard-panel__top-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: var(--spacing-lg);
-  align-items: start;
+  display: block;
+  width: 100%;
 }
 
 .dashboard-panel__scan-form {
