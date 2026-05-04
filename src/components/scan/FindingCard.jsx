@@ -1,98 +1,68 @@
 import React, { useState } from 'react';
 import { getSeverityColor } from '../../utils/riskUtils';
 
-const FindingCard = ({ vuln, defaultOpen }) => {
-  const [expanded, setExpanded] = useState(defaultOpen);
+const FindingCard = ({ vuln, defaultOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const sevColor = getSeverityColor(vuln.severity);
-  const mlLabel = vuln.ml_prediction === 1 ? 'VULNERABLE' : vuln.ml_prediction === 0 ? 'SAFE' : 'N/A';
-  const mlColor = vuln.ml_prediction === 1 ? '#ba1a1a' : '#006600';
+  const severityColor = getSeverityColor(vuln.severity);
 
   return (
-    <div className="finding-card">
-      <div
-        className="finding-card__header"
-        onClick={() => setExpanded(!expanded)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && setExpanded(!expanded)}
-      >
-        <div className="finding-card__severity">
-          <span
-            className="sev-badge"
-            style={{ color: sevColor, borderColor: sevColor }}
-          >
-            {vuln.severity}
-          </span>
-        </div>
-        <div className="finding-card__info">
-          <div className="finding-card__type">{vuln.type}</div>
-          <div className="finding-card__url">{vuln.url || 'N/A'}</div>
-        </div>
-        {vuln.ml_prediction !== undefined && (
-          <span className="sev-badge" style={{ color: mlColor, borderColor: mlColor }}>
-            ML: {mlLabel}
-          </span>
-        )}
-        <span className="finding-card__arrow">{expanded ? '▲' : '▼'}</span>
-      </div>
+    <div className="finding-card outset">
+      <button className="finding-card__header" onClick={() => setIsOpen(!isOpen)}>
+        <span
+          className="sev-badge"
+          style={{ backgroundColor: severityColor, color: '#fff' }}
+        >
+          {vuln.severity || 'UNKNOWN'}
+        </span>
+        <span className="finding-card__type">{vuln.vulnerability_type || 'Unknown'}</span>
+        <span className="finding-card__url">{vuln.target_endpoint || ''}</span>
+        <span className="finding-card__arrow">{isOpen ? '\u25B2' : '\u25BC'}</span>
+      </button>
 
-      {expanded && (
-        <div className="finding-card__body">
-          <div className="finding-card__metrics">
-            {vuln.confidence > 0 && (
-              <div className="metric">
-                <div className="metric__label">Scanner Confidence</div>
-                <div className="retro-progress retro-progress--thin">
-                  <div
-                    className="retro-progress__bar"
-                    style={{ width: `${(vuln.confidence * 100)}%`, backgroundColor: sevColor }}
-                  />
-                </div>
-                <span className="metric__value" style={{ color: sevColor }}>
-                  {(vuln.confidence * 100).toFixed(1)}%
-                </span>
-              </div>
-            )}
-            {vuln.ml_confidence !== undefined && vuln.ml_confidence !== null && (
-              <div className="metric">
-                <div className="metric__label">ML Confidence</div>
-                <div className="retro-progress retro-progress--thin">
-                  <div
-                    className="retro-progress__bar"
-                    style={{ width: `${(vuln.ml_confidence * 100)}%`, backgroundColor: mlColor }}
-                  />
-                </div>
-                <span className="metric__value" style={{ color: mlColor }}>
-                  {(vuln.ml_confidence * 100).toFixed(1)}%
-                </span>
-              </div>
-            )}
-            {vuln.payload && (
-              <div className="metric">
-                <div className="metric__label">Payload Used</div>
-                <span className="finding-card__payload">{vuln.payload}</span>
-              </div>
-            )}
+      {isOpen && (
+        <div className="finding-card__body sunken-panel">
+          <div className="finding-card__field">
+            <span className="finding-card__field-label">Vulnerability Type:</span>
+            <code>{vuln.vulnerability_type || 'N/A'}</code>
           </div>
 
-          {vuln.evidence && (
-            <div className="finding-detail">
-              <div className="finding-detail__label">Evidence</div>
-              <div className="finding-detail__evidence">{vuln.evidence}</div>
+          <div className="finding-card__field">
+            <span className="finding-card__field-label">Target Endpoint:</span>
+            <code>{vuln.target_endpoint || 'N/A'}</code>
+          </div>
+
+          <div className="finding-card__field">
+            <span className="finding-card__field-label">HTTP Method:</span>
+            <code>{vuln.method || 'N/A'}</code>
+          </div>
+
+          <div className="finding-card__field">
+            <span className="finding-card__field-label">Vulnerable Parameter:</span>
+            <code>{vuln.vulnerable_parameter || 'N/A'}</code>
+          </div>
+
+          <div className="finding-card__field">
+            <span className="finding-card__field-label">Payload:</span>
+            <code className="finding-card__payload">{vuln.payload || 'N/A'}</code>
+          </div>
+
+          <div className="finding-card__field">
+            <span className="finding-card__field-label">Evidence:</span>
+            <pre className="finding-card__evidence">{vuln.evidence || 'No evidence available.'}</pre>
+          </div>
+
+          {vuln.llm_explanation && (
+            <div className="finding-card__field">
+              <span className="finding-card__field-label">LLM Explanation:</span>
+              <pre className="finding-card__evidence">{vuln.llm_explanation}</pre>
             </div>
           )}
 
-          {vuln.recommendations?.length > 0 && (
-            <div className="finding-detail">
-              <div className="finding-detail__label" style={{ color: '#006600' }}>
-                Recommended Fixes
-              </div>
-              <ul className="finding-detail__recs">
-                {vuln.recommendations.map((rec, i) => (
-                  <li key={i}>{rec}</li>
-                ))}
-              </ul>
+          {vuln.remediation_code && (
+            <div className="finding-card__field">
+              <span className="finding-card__field-label">Remediation:</span>
+              <pre className="finding-card__evidence">{vuln.remediation_code}</pre>
             </div>
           )}
         </div>

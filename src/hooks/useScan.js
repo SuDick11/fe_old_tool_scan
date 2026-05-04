@@ -1,23 +1,21 @@
 import { useState, useCallback } from 'react';
-import { scanApi } from '../api/scanApi';
+import scanApi from '../api/scanApi';
 
-export const useScan = () => {
+const useScan = () => {
   const [scanResults, setScanResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const startScan = useCallback(async (url, depth = 'quick') => {
+  const startScan = useCallback(async (url, maxDepth, cookie) => {
     setIsLoading(true);
     setError(null);
-
-    const depthNum = depth === 'deep' ? 2 : 1;
-
     try {
-      const data = await scanApi.scan(url, depthNum);
-      setScanResults(data);
-      return data;
+      const result = await scanApi.scan(url, maxDepth, cookie);
+      setScanResults(result);
+      return result;
     } catch (err) {
-      setError(err.message);
+      const msg = err.response?.data?.detail || err.message || 'Scan failed';
+      setError(msg);
       throw err;
     } finally {
       setIsLoading(false);
@@ -29,11 +27,7 @@ export const useScan = () => {
     setError(null);
   }, []);
 
-  return {
-    scanResults,
-    isLoading,
-    error,
-    startScan,
-    clearScan,
-  };
+  return { scanResults, isLoading, error, startScan, clearScan };
 };
+
+export default useScan;

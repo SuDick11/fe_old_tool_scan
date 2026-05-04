@@ -9,11 +9,12 @@ export const getRiskColor = (score) => {
   if (score === null || score === undefined) return '#767684';
   if (score >= 70) return '#ba1a1a';
   if (score >= 40) return '#767684';
-  return '#464747';
+  return '#006600';
 };
 
 export const getSeverityColor = (severity) => {
-  const s = (severity || 'LOW').toUpperCase();
+  if (!severity) return '#767684';
+  const s = severity.toUpperCase();
   if (s === 'CRITICAL' || s === 'HIGH') return '#ba1a1a';
   if (s === 'MEDIUM') return '#767684';
   if (s === 'LOW') return '#006600';

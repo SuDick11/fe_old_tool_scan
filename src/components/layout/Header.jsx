@@ -1,29 +1,14 @@
 import React from 'react';
 
-const NAV_TABS = [
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'scans', label: 'Scans' },
-  { id: 'reports', label: 'Reports' },
-];
-
-const Header = ({ activeTab, onTabChange }) => (
-  <header className="header">
-    <div className="header__left">
-      <div className="header__logo">AI-Assisted Web Vulnerability Scanner</div>
-      <nav className="retro-nav">
-        {NAV_TABS.map(({ id, label }) => (
-          <button
-            key={id}
-            className={`retro-nav__tab ${activeTab === id ? 'retro-nav__tab--active' : ''}`}
-            onClick={() => onTabChange(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
-    </div>
-    <div className="header__right" />
-  </header>
-);
+const Header = () => {
+  return (
+    <header className="retro-titlebar">
+      <div className="retro-titlebar__left">
+        <span className="retro-titlebar__icon">&#9760;</span>
+        <span className="retro-titlebar__title">AI-Assisted Web Vulnerability Scanner</span>
+      </div>
+    </header>
+  );
+};
 
 export default Header;

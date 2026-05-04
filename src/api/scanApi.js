@@ -1,24 +1,28 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+import axios from 'axios';
 
-export const scanApi = {
-  scan: async (url, depth = 1) => {
-    const response = await fetch(`${BACKEND_URL}/scan`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, depth }),
-    });
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `Scan failed (${response.status})`);
+const scanApi = {
+  scan: async (url, depth, cookie) => {
+    const payload = { url, max_depth: depth };
+    if (cookie && cookie.trim()) {
+      payload.dvwa_cookie = {
+        phpsessid: cookie.trim(),
+        security: 'low',
+      };
     }
-
-    return response.json();
+    const response = await axios.post(
+      `${BACKEND_URL}/scanner/full-scan`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return response.data;
   },
 
   health: async () => {
-    const response = await fetch(`${BACKEND_URL}/health`);
-    if (!response.ok) throw new Error(`Health check failed (${response.status})`);
-    return response.json();
+    const response = await axios.get(`${BACKEND_URL}/health`);
+    return response.data;
   },
 };
+
+export default scanApi;
