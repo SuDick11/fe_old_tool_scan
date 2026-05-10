@@ -1,6 +1,42 @@
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+const retroCodeTheme = {
+  'code[class*="language-"]': { color: '#000000', fontFamily: "'Courier New', Courier, monospace" },
+  'pre[class*="language-"]': { color: '#000000', fontFamily: "'Courier New', Courier, monospace" },
+  comment: { color: '#5a5a5a' },
+  prolog: { color: '#000000' },
+  doctype: { color: '#000000' },
+  cdata: { color: '#000000' },
+  punctuation: { color: '#000000' },
+  property: { color: '#000080' },
+  tag: { color: '#000080' },
+  boolean: { color: '#808000' },
+  number: { color: '#808000' },
+  constant: { color: '#000080' },
+  symbol: { color: '#808000' },
+  selector: { color: '#006600' },
+  'attr-name': { color: '#000080' },
+  string: { color: '#006600' },
+  char: { color: '#006600' },
+  builtin: { color: '#006600' },
+  inserted: { color: '#006600' },
+  operator: { color: '#000000' },
+  entity: { color: '#000080', cursor: 'help' },
+  url: { color: '#000080' },
+  '.language-css .token.string': { color: '#808000' },
+  '.style .token.string': { color: '#808000' },
+  variable: { color: '#000000' },
+  atrule: { color: '#000080' },
+  'attr-value': { color: '#006600' },
+  function: { color: '#000000' },
+  'class-name': { color: '#000080' },
+  keyword: { color: '#000080' },
+  regex: { color: '#006600' },
+  important: { color: '#808000', fontWeight: 'bold' },
+  bold: { fontWeight: 'bold' },
+  italic: { fontStyle: 'italic' },
+};
 
 const FindingCard = ({ vuln, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -57,8 +93,16 @@ const FindingCard = ({ vuln, defaultOpen = false }) => {
               <span className="finding-card__field-label">Remediation:</span>
               <SyntaxHighlighter
                 language="python"
-                style={atomOneLight}
-                customStyle={{ borderRadius: '4px', padding: '12px', fontSize: '13px', backgroundColor: '#ffffff' }}
+                style={retroCodeTheme}
+                customStyle={{
+                  backgroundColor: '#f0f0f0',
+                  padding: '8px 12px',
+                  fontSize: '11px',
+                  fontFamily: "'Courier New', Courier, monospace",
+                  border: '1px solid #a0a0a0',
+                  borderTop: '1px solid #808080',
+                  borderLeft: '1px solid #808080',
+                }}
               >
                 {vuln.remediation_code
                   .replace(/^```[\w]*\n?/, '')
